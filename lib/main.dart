@@ -337,7 +337,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                   .doc(docs[index].id)
                                   .update({
                                 "resolved": false,
-                                "updatedAt": Timestamp.now()
+                                "resolverUid":
+                                    FirebaseAuth.instance.currentUser?.uid,
+                                "updatedAt": Timestamp.now(),
                               }).catchError((e) {
                                 openUpdateErrorDialog(context);
                               });
@@ -348,7 +350,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             <PopupMenuEntry<TicketMenuItem>>[
                           const PopupMenuItem<TicketMenuItem>(
                             value: TicketMenuItem.toggleStatus,
-                            child: Text("リオープン"),
+                            child: Text("未解決にマーク"),
                           ),
                         ],
                       ),
@@ -385,7 +387,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                 .doc(docs[index].id)
                                 .update({
                               "resolved": true,
-                              "updatedAt": Timestamp.now()
+                              "resolvedReason": "クイック解決",
+                              "resolverUid":
+                                  FirebaseAuth.instance.currentUser?.uid,
+                              "updatedAt": Timestamp.now(),
                             }).catchError((e) {
                               openUpdateErrorDialog(context);
                             });
@@ -396,7 +401,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           <PopupMenuEntry<TicketMenuItem>>[
                         const PopupMenuItem<TicketMenuItem>(
                           value: TicketMenuItem.toggleStatus,
-                          child: Text("クローズ"),
+                          child: Text("クイック解決"),
                         ),
                       ],
                     ),

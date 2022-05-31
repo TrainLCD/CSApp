@@ -32,8 +32,10 @@ class FirTimestamp with _$FirTimestamp {
 @freezed
 class Report with _$Report {
   const factory Report({
-    @Default('') String description,
+    required String description,
     @Default(false) bool resolved,
+    @Default("") String resolvedReason,
+    @Default(null) String? resolverUid,
     @FirTimestampConverter() FirTimestamp? createdAt,
     @FirTimestampConverter() FirTimestamp? updatedAt,
   }) = _Report;

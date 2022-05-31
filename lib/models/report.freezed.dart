@@ -318,6 +318,8 @@ Report _$ReportFromJson(Map<String, dynamic> json) {
 mixin _$Report {
   String get description => throw _privateConstructorUsedError;
   bool get resolved => throw _privateConstructorUsedError;
+  String get resolvedReason => throw _privateConstructorUsedError;
+  String? get resolverUid => throw _privateConstructorUsedError;
   @FirTimestampConverter()
   FirTimestamp? get createdAt => throw _privateConstructorUsedError;
   @FirTimestampConverter()
@@ -335,6 +337,8 @@ abstract class $ReportCopyWith<$Res> {
   $Res call(
       {String description,
       bool resolved,
+      String resolvedReason,
+      String? resolverUid,
       @FirTimestampConverter() FirTimestamp? createdAt,
       @FirTimestampConverter() FirTimestamp? updatedAt});
 
@@ -354,6 +358,8 @@ class _$ReportCopyWithImpl<$Res> implements $ReportCopyWith<$Res> {
   $Res call({
     Object? description = freezed,
     Object? resolved = freezed,
+    Object? resolvedReason = freezed,
+    Object? resolverUid = freezed,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
   }) {
@@ -366,6 +372,14 @@ class _$ReportCopyWithImpl<$Res> implements $ReportCopyWith<$Res> {
           ? _value.resolved
           : resolved // ignore: cast_nullable_to_non_nullable
               as bool,
+      resolvedReason: resolvedReason == freezed
+          ? _value.resolvedReason
+          : resolvedReason // ignore: cast_nullable_to_non_nullable
+              as String,
+      resolverUid: resolverUid == freezed
+          ? _value.resolverUid
+          : resolverUid // ignore: cast_nullable_to_non_nullable
+              as String?,
       createdAt: createdAt == freezed
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -408,6 +422,8 @@ abstract class _$$_ReportCopyWith<$Res> implements $ReportCopyWith<$Res> {
   $Res call(
       {String description,
       bool resolved,
+      String resolvedReason,
+      String? resolverUid,
       @FirTimestampConverter() FirTimestamp? createdAt,
       @FirTimestampConverter() FirTimestamp? updatedAt});
 
@@ -430,6 +446,8 @@ class __$$_ReportCopyWithImpl<$Res> extends _$ReportCopyWithImpl<$Res>
   $Res call({
     Object? description = freezed,
     Object? resolved = freezed,
+    Object? resolvedReason = freezed,
+    Object? resolverUid = freezed,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
   }) {
@@ -442,6 +460,14 @@ class __$$_ReportCopyWithImpl<$Res> extends _$ReportCopyWithImpl<$Res>
           ? _value.resolved
           : resolved // ignore: cast_nullable_to_non_nullable
               as bool,
+      resolvedReason: resolvedReason == freezed
+          ? _value.resolvedReason
+          : resolvedReason // ignore: cast_nullable_to_non_nullable
+              as String,
+      resolverUid: resolverUid == freezed
+          ? _value.resolverUid
+          : resolverUid // ignore: cast_nullable_to_non_nullable
+              as String?,
       createdAt: createdAt == freezed
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -458,8 +484,10 @@ class __$$_ReportCopyWithImpl<$Res> extends _$ReportCopyWithImpl<$Res>
 @JsonSerializable()
 class _$_Report implements _Report {
   const _$_Report(
-      {this.description = '',
+      {required this.description,
       this.resolved = false,
+      this.resolvedReason = "",
+      this.resolverUid = null,
       @FirTimestampConverter() this.createdAt,
       @FirTimestampConverter() this.updatedAt});
 
@@ -467,11 +495,16 @@ class _$_Report implements _Report {
       _$$_ReportFromJson(json);
 
   @override
-  @JsonKey()
   final String description;
   @override
   @JsonKey()
   final bool resolved;
+  @override
+  @JsonKey()
+  final String resolvedReason;
+  @override
+  @JsonKey()
+  final String? resolverUid;
   @override
   @FirTimestampConverter()
   final FirTimestamp? createdAt;
@@ -481,7 +514,7 @@ class _$_Report implements _Report {
 
   @override
   String toString() {
-    return 'Report(description: $description, resolved: $resolved, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'Report(description: $description, resolved: $resolved, resolvedReason: $resolvedReason, resolverUid: $resolverUid, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -492,6 +525,10 @@ class _$_Report implements _Report {
             const DeepCollectionEquality()
                 .equals(other.description, description) &&
             const DeepCollectionEquality().equals(other.resolved, resolved) &&
+            const DeepCollectionEquality()
+                .equals(other.resolvedReason, resolvedReason) &&
+            const DeepCollectionEquality()
+                .equals(other.resolverUid, resolverUid) &&
             const DeepCollectionEquality().equals(other.createdAt, createdAt) &&
             const DeepCollectionEquality().equals(other.updatedAt, updatedAt));
   }
@@ -502,6 +539,8 @@ class _$_Report implements _Report {
       runtimeType,
       const DeepCollectionEquality().hash(description),
       const DeepCollectionEquality().hash(resolved),
+      const DeepCollectionEquality().hash(resolvedReason),
+      const DeepCollectionEquality().hash(resolverUid),
       const DeepCollectionEquality().hash(createdAt),
       const DeepCollectionEquality().hash(updatedAt));
 
@@ -518,8 +557,10 @@ class _$_Report implements _Report {
 
 abstract class _Report implements Report {
   const factory _Report(
-      {final String description,
+      {required final String description,
       final bool resolved,
+      final String resolvedReason,
+      final String? resolverUid,
       @FirTimestampConverter() final FirTimestamp? createdAt,
       @FirTimestampConverter() final FirTimestamp? updatedAt}) = _$_Report;
 
@@ -529,6 +570,10 @@ abstract class _Report implements Report {
   String get description => throw _privateConstructorUsedError;
   @override
   bool get resolved => throw _privateConstructorUsedError;
+  @override
+  String get resolvedReason => throw _privateConstructorUsedError;
+  @override
+  String? get resolverUid => throw _privateConstructorUsedError;
   @override
   @FirTimestampConverter()
   FirTimestamp? get createdAt => throw _privateConstructorUsedError;
