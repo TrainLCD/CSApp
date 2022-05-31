@@ -49,3 +49,15 @@ app.*.map.json
 # Firebase
 google-services.json
 GoogleService-Info.plist
+firebase_options.dart
+
+# Fastlane
+report.xml
+
+# Dotenv
+.env
+.env.*
+
+# iOS Binary
+Runner.ipa
+Runner.app.dSYM.zip
