@@ -14,33 +14,12 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: "TrainLCD CS Manager",
-      home: StreamBuilder<User?>(
-        stream: FirebaseAuth.instance.authStateChanges(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          if (snapshot.hasData) {
-            return const HomeScreen();
-          }
-          return const LoginScreen();
-        },
-      ),
-    );
-  }
+  runApp(MaterialApp(
+      initialRoute: FirebaseAuth.instance.currentUser == null ? "/login" : "/",
+      routes: {
+        "/": (context) => const HomeScreen(),
+        "/login": (context) => const LoginScreen()
+      }));
 }
 
 enum ErrorDialogAnswers { ok }
@@ -61,6 +40,41 @@ class _LoginScreenState extends State<LoginScreen> {
   final passwordFormController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
+  void _openAuthErrorDialog(BuildContext context) {
+    showDialog<ErrorDialogAnswers>(
+        context: context,
+        builder: (BuildContext context) =>
+            SimpleDialog(title: const Text("ログインに失敗しました"), children: <Widget>[
+              SimpleDialogOption(
+                child: const Text("OK"),
+                onPressed: () {
+                  Navigator.pop(context, ErrorDialogAnswers.ok);
+                },
+              )
+            ])).then((value) {
+      switch (value) {
+        case ErrorDialogAnswers.ok:
+          break;
+        case null:
+          break;
+      }
+    });
+  }
+
+  void _onLoginPressed() async {
+    if (_formKey.currentState!.validate()) {
+      try {
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
+            email: emailFormController.text,
+            password: passwordFormController.text);
+      } catch (e) {
+        _openAuthErrorDialog(context);
+      }
+      if (!mounted) return;
+      Navigator.pushReplacementNamed(context, "/");
+    }
+  }
+
   @override
   void dispose() {
     emailFormController.dispose();
@@ -70,27 +84,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    void openAuthErrorDialog(BuildContext context) {
-      showDialog<ErrorDialogAnswers>(
-          context: context,
-          builder: (BuildContext context) =>
-              SimpleDialog(title: const Text("ログインに失敗しました"), children: <Widget>[
-                SimpleDialogOption(
-                  child: const Text("OK"),
-                  onPressed: () {
-                    Navigator.pop(context, ErrorDialogAnswers.ok);
-                  },
-                )
-              ])).then((value) {
-        switch (value) {
-          case ErrorDialogAnswers.ok:
-            break;
-          case null:
-            break;
-        }
-      });
-    }
-
     return Scaffold(
         body: Container(
             height: double.infinity,
@@ -185,18 +178,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 )),
                             Center(
                                 child: OutlinedButton(
-                                    onPressed: () {
-                                      if (_formKey.currentState!.validate()) {
-                                        FirebaseAuth.instance
-                                            .signInWithEmailAndPassword(
-                                                email: emailFormController.text,
-                                                password:
-                                                    passwordFormController.text)
-                                            .catchError((e) {
-                                          openAuthErrorDialog(context);
-                                        });
-                                      }
-                                    },
+                                    onPressed: _onLoginPressed,
                                     style: OutlinedButton.styleFrom(
                                         backgroundColor: Colors.white,
                                         shape: const StadiumBorder(),
@@ -235,7 +217,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final _db = FirebaseFirestore.instance;
   bool _showResolvedTickets = false;
 
-  void openUpdateErrorDialog(BuildContext context) {
+  void _openUpdateErrorDialog(BuildContext context) {
     showDialog<ErrorDialogAnswers>(
         context: context,
         builder: (BuildContext context) =>
@@ -259,10 +241,14 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _ticketList() {
     return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
         stream: _showResolvedTickets
-            ? _db.collection("reports").snapshots()
+            ? _db
+                .collection("reports")
+                .orderBy("createdAt", descending: true)
+                .snapshots()
             : _db
                 .collection("reports")
                 .where("resolved", isEqualTo: false)
+                .orderBy("createdAt", descending: true)
                 .snapshots(),
         builder: (BuildContext context,
             AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
@@ -341,7 +327,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     FirebaseAuth.instance.currentUser?.uid,
                                 "updatedAt": Timestamp.now(),
                               }).catchError((e) {
-                                openUpdateErrorDialog(context);
+                                _openUpdateErrorDialog(context);
                               });
                               break;
                           }
@@ -392,7 +378,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   FirebaseAuth.instance.currentUser?.uid,
                               "updatedAt": Timestamp.now(),
                             }).catchError((e) {
-                              openUpdateErrorDialog(context);
+                              _openUpdateErrorDialog(context);
                             });
                             break;
                         }
@@ -469,6 +455,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               onPressed: () {
                                 FirebaseAuth.instance.signOut();
                                 Navigator.pop(context);
+                                Navigator.pushReplacementNamed(
+                                    context, "/login");
                               },
                             ),
                           ],
