@@ -1,6 +1,19 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:csapp/models/report.dart';
+import 'package:email_validator/email_validator.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-void main() {
+import 'firebase_options.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(const MyApp());
 }
 
@@ -11,105 +24,467 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
+      title: "TrainLCD CS Manager",
+      home: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          if (snapshot.hasData) {
+            return const HomeScreen();
+          }
+          return const LoginScreen();
+        },
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+enum ErrorDialogAnswers { ok }
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
+enum AppBarMenuItem { showResolvedTickets, signOut }
 
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
+enum TicketMenuItem { toggleStatus }
 
-  final String title;
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  _LoginScreenState createState() => _LoginScreenState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _LoginScreenState extends State<LoginScreen> {
+  final emailFormController = TextEditingController();
+  final passwordFormController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+  @override
+  void dispose() {
+    emailFormController.dispose();
+    passwordFormController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
+    void openAuthErrorDialog(BuildContext context) {
+      showDialog<ErrorDialogAnswers>(
+          context: context,
+          builder: (BuildContext context) =>
+              SimpleDialog(title: const Text("ログインに失敗しました"), children: <Widget>[
+                SimpleDialogOption(
+                  child: const Text("OK"),
+                  onPressed: () {
+                    Navigator.pop(context, ErrorDialogAnswers.ok);
+                  },
+                )
+              ])).then((value) {
+        switch (value) {
+          case ErrorDialogAnswers.ok:
+            break;
+          case null:
+            break;
+        }
+      });
+    }
+
     return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
+        body: Container(
+            height: double.infinity,
+            width: double.infinity,
+            decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                    begin: FractionalOffset.topLeft,
+                    end: FractionalOffset.bottomRight,
+                    colors: [Color(0xff8BC6EC), Color(0xff9599E2)],
+                    stops: [0.0, 1.0])),
+            child: Container(
+              margin: const EdgeInsets.fromLTRB(48, 0, 48, 0),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.train,
+                      color: Colors.white,
+                      size: 128.0,
+                      semanticLabel: 'Train',
+                    ),
+                    Container(
+                      margin: const EdgeInsets.fromLTRB(0, 72, 0, 32),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              margin: const EdgeInsets.only(bottom: 16),
+                              child: TextFormField(
+                                controller: emailFormController,
+                                keyboardType: TextInputType.emailAddress,
+                                decoration: const InputDecoration(
+                                  hintText: "メールアドレス",
+                                  hintStyle: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                  prefixIcon: Icon(
+                                    Icons.email,
+                                    color: Colors.white,
+                                  ),
+                                  enabledBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.white),
+                                  ),
+                                  focusedBorder: UnderlineInputBorder(
+                                    borderSide:
+                                        BorderSide(color: Colors.blueAccent),
+                                  ),
+                                ),
+                                style: const TextStyle(color: Colors.white),
+                                validator: (String? value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'メールアドレスを入力してください';
+                                  }
+                                  if (!EmailValidator.validate(value)) {
+                                    return 'メールアドレスの形式が正しくありません';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
+                            Container(
+                                margin: const EdgeInsets.only(bottom: 32),
+                                child: TextFormField(
+                                  controller: passwordFormController,
+                                  obscureText: true,
+                                  style: const TextStyle(color: Colors.white),
+                                  decoration: const InputDecoration(
+                                    hintText: "パスワード",
+                                    hintStyle: TextStyle(color: Colors.white),
+                                    prefixIcon: Icon(
+                                      Icons.key,
+                                      color: Colors.white,
+                                    ),
+                                    enabledBorder: UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.white),
+                                    ),
+                                    focusedBorder: UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.blueAccent),
+                                    ),
+                                  ),
+                                  validator: (String? value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'パスワードを入力してください';
+                                    }
+                                    return null;
+                                  },
+                                )),
+                            Center(
+                                child: OutlinedButton(
+                                    onPressed: () {
+                                      if (_formKey.currentState!.validate()) {
+                                        FirebaseAuth.instance
+                                            .signInWithEmailAndPassword(
+                                                email: emailFormController.text,
+                                                password:
+                                                    passwordFormController.text)
+                                            .catchError((e) {
+                                          openAuthErrorDialog(context);
+                                        });
+                                      }
+                                    },
+                                    style: OutlinedButton.styleFrom(
+                                        backgroundColor: Colors.white,
+                                        shape: const StadiumBorder(),
+                                        side: const BorderSide(
+                                            width: 2, color: Colors.white),
+                                        minimumSize:
+                                            const Size(double.infinity, 48)),
+                                    child: const Text("ログイン")))
+                          ],
+                        ),
+                      ),
+                    ),
+                    const Text("このアプリを使用して知り得たいずれの情報も第三者に提供することを固く禁ずる",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: Color(0xffffffff),
+                            fontSize: 12.0,
+                            height: 1.5))
+                  ],
+                ),
+              ),
+            )));
+  }
+}
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  String getFormattedDate(DateTime dt) =>
+      DateFormat("yyyy-MM-dd HH:mm:ss").format(dt).toString();
+  final _db = FirebaseFirestore.instance;
+  bool _showResolvedTickets = false;
+
+  void openUpdateErrorDialog(BuildContext context) {
+    showDialog<ErrorDialogAnswers>(
+        context: context,
+        builder: (BuildContext context) =>
+            SimpleDialog(title: const Text("更新に失敗しました"), children: <Widget>[
+              SimpleDialogOption(
+                child: const Text("OK"),
+                onPressed: () {
+                  Navigator.pop(context, ErrorDialogAnswers.ok);
+                },
+              )
+            ])).then((value) {
+      switch (value) {
+        case ErrorDialogAnswers.ok:
+          break;
+        case null:
+          break;
+      }
+    });
+  }
+
+  Widget _ticketList() {
+    return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+        stream: _showResolvedTickets
+            ? _db.collection("reports").snapshots()
+            : _db
+                .collection("reports")
+                .where("resolved", isEqualTo: false)
+                .snapshots(),
+        builder: (BuildContext context,
+            AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          if (snapshot.hasData) {
+            final docs = snapshot.data!.docs;
+
+            if (docs.isEmpty) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.local_activity,
+                      size: 128,
+                      color: Colors.black12,
+                    ),
+                    Container(
+                        margin: const EdgeInsets.only(top: 8),
+                        child: const Text(
+                          "やりました！未解決チケットは0件です！",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black45),
+                        ))
+                  ],
+                ),
+              );
+            }
+
+            return ListView.separated(
+                padding: const EdgeInsets.only(top: 10),
+                itemCount: docs.length,
+                itemBuilder: (context, index) {
+                  final report = Report.fromJson(docs[index].data());
+                  final createdAt =
+                      docs[index].data()["createdAt"] as Timestamp;
+                  if (report.resolved) {
+                    return ListTile(
+                      leading: Container(
+                        width: 32,
+                        height: 32,
+                        decoration: BoxDecoration(
+                            border:
+                                Border.all(color: Colors.purple, width: 2.5),
+                            borderRadius: BorderRadius.circular(16)),
+                        child: const Icon(
+                          Icons.check,
+                          color: Colors.purple,
+                          size: 18,
+                        ),
+                      ),
+                      title: Text(
+                        report.description,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
+                      ),
+                      subtitle:
+                          Text('${getFormattedDate(createdAt.toDate())} 解決済'),
+                      trailing: PopupMenuButton<TicketMenuItem>(
+                        onSelected: (TicketMenuItem item) async {
+                          switch (item) {
+                            case TicketMenuItem.toggleStatus:
+                              await _db
+                                  .collection("reports")
+                                  .doc(docs[index].id)
+                                  .update({
+                                "resolved": false,
+                                "updatedAt": Timestamp.now()
+                              }).catchError((e) {
+                                openUpdateErrorDialog(context);
+                              });
+                              break;
+                          }
+                        },
+                        itemBuilder: (context) =>
+                            <PopupMenuEntry<TicketMenuItem>>[
+                          const PopupMenuItem<TicketMenuItem>(
+                            value: TicketMenuItem.toggleStatus,
+                            child: Text("リオープン"),
+                          ),
+                        ],
+                      ),
+                      isThreeLine: true,
+                    );
+                  }
+
+                  return ListTile(
+                    leading: Container(
+                      width: 32,
+                      height: 32,
+                      decoration: BoxDecoration(
+                          border: Border.all(color: Colors.green, width: 2.5),
+                          borderRadius: BorderRadius.circular(16)),
+                      child: const Icon(
+                        Icons.circle,
+                        color: Colors.green,
+                        size: 8,
+                      ),
+                    ),
+                    title: Text(
+                      report.description,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                    ),
+                    subtitle:
+                        Text('${getFormattedDate(createdAt.toDate())} 未解決'),
+                    trailing: PopupMenuButton<TicketMenuItem>(
+                      onSelected: (TicketMenuItem item) async {
+                        switch (item) {
+                          case TicketMenuItem.toggleStatus:
+                            await _db
+                                .collection("reports")
+                                .doc(docs[index].id)
+                                .update({
+                              "resolved": true,
+                              "updatedAt": Timestamp.now()
+                            }).catchError((e) {
+                              openUpdateErrorDialog(context);
+                            });
+                            break;
+                        }
+                      },
+                      itemBuilder: (context) =>
+                          <PopupMenuEntry<TicketMenuItem>>[
+                        const PopupMenuItem<TicketMenuItem>(
+                          value: TicketMenuItem.toggleStatus,
+                          child: Text("クローズ"),
+                        ),
+                      ],
+                    ),
+                    isThreeLine: true,
+                  );
+                },
+                separatorBuilder: (context, index) {
+                  return const Divider(height: 0.5);
+                });
+          }
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.error,
+                  size: 128,
+                  color: Colors.black12,
+                ),
+                Container(
+                    margin: const EdgeInsets.only(top: 8),
+                    child: const Text(
+                      "表示できるデータがありません。",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black45),
+                    ))
+              ],
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
+          );
+        });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text("チケット"),
+          actions: [
+            PopupMenuButton<AppBarMenuItem>(
+              onSelected: (AppBarMenuItem item) {
+                switch (item) {
+                  case AppBarMenuItem.showResolvedTickets:
+                    setState(() {
+                      _showResolvedTickets = !_showResolvedTickets;
+                    });
+                    break;
+                  case AppBarMenuItem.signOut:
+                    showDialog(
+                      context: context,
+                      builder: (_) {
+                        return AlertDialog(
+                          title: const Text("警告"),
+                          content: const Text("ログアウトします。よろしいですか？"),
+                          actions: <Widget>[
+                            // ボタン領域
+                            TextButton(
+                              child: const Text("キャンセル"),
+                              onPressed: () => Navigator.pop(context),
+                            ),
+                            TextButton(
+                              child: const Text("OK"),
+                              onPressed: () {
+                                FirebaseAuth.instance.signOut();
+                                Navigator.pop(context);
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                    break;
+                }
+              },
+              itemBuilder: (context) => <PopupMenuEntry<AppBarMenuItem>>[
+                PopupMenuItem<AppBarMenuItem>(
+                  value: AppBarMenuItem.showResolvedTickets,
+                  child: Text(
+                      _showResolvedTickets ? "解決済みチケットを隠す" : "解決済みチケットを表示する"),
+                ),
+                const PopupMenuItem<AppBarMenuItem>(
+                    value: AppBarMenuItem.signOut, child: Text('ログアウト'))
+              ],
+            )
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
+        body: _ticketList());
   }
 }
