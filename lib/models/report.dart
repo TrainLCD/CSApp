@@ -38,6 +38,7 @@ class Report with _$Report {
     @Default(null) String? resolverUid,
     @FirTimestampConverter() FirTimestamp? createdAt,
     @FirTimestampConverter() FirTimestamp? updatedAt,
+    @FirTimestampConverter() FirTimestamp? resolvedAt,
   }) = _Report;
 
   factory Report.fromJson(Map<String, dynamic> json) => _$ReportFromJson(json);

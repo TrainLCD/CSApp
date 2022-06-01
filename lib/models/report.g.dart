@@ -13,6 +13,7 @@ _$_Report _$$_ReportFromJson(Map<String, dynamic> json) => _$_Report(
       resolverUid: json['resolverUid'] as String? ?? null,
       createdAt: const FirTimestampConverter().fromJson(json['createdAt']),
       updatedAt: const FirTimestampConverter().fromJson(json['updatedAt']),
+      resolvedAt: const FirTimestampConverter().fromJson(json['resolvedAt']),
     );
 
 Map<String, dynamic> _$$_ReportToJson(_$_Report instance) => <String, dynamic>{
@@ -22,4 +23,5 @@ Map<String, dynamic> _$$_ReportToJson(_$_Report instance) => <String, dynamic>{
       'resolverUid': instance.resolverUid,
       'createdAt': const FirTimestampConverter().toJson(instance.createdAt),
       'updatedAt': const FirTimestampConverter().toJson(instance.updatedAt),
+      'resolvedAt': const FirTimestampConverter().toJson(instance.resolvedAt),
     };

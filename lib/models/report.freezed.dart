@@ -324,6 +324,8 @@ mixin _$Report {
   FirTimestamp? get createdAt => throw _privateConstructorUsedError;
   @FirTimestampConverter()
   FirTimestamp? get updatedAt => throw _privateConstructorUsedError;
+  @FirTimestampConverter()
+  FirTimestamp? get resolvedAt => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -340,10 +342,12 @@ abstract class $ReportCopyWith<$Res> {
       String resolvedReason,
       String? resolverUid,
       @FirTimestampConverter() FirTimestamp? createdAt,
-      @FirTimestampConverter() FirTimestamp? updatedAt});
+      @FirTimestampConverter() FirTimestamp? updatedAt,
+      @FirTimestampConverter() FirTimestamp? resolvedAt});
 
   $FirTimestampCopyWith<$Res>? get createdAt;
   $FirTimestampCopyWith<$Res>? get updatedAt;
+  $FirTimestampCopyWith<$Res>? get resolvedAt;
 }
 
 /// @nodoc
@@ -362,6 +366,7 @@ class _$ReportCopyWithImpl<$Res> implements $ReportCopyWith<$Res> {
     Object? resolverUid = freezed,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
+    Object? resolvedAt = freezed,
   }) {
     return _then(_value.copyWith(
       description: description == freezed
@@ -388,6 +393,10 @@ class _$ReportCopyWithImpl<$Res> implements $ReportCopyWith<$Res> {
           ? _value.updatedAt
           : updatedAt // ignore: cast_nullable_to_non_nullable
               as FirTimestamp?,
+      resolvedAt: resolvedAt == freezed
+          ? _value.resolvedAt
+          : resolvedAt // ignore: cast_nullable_to_non_nullable
+              as FirTimestamp?,
     ));
   }
 
@@ -412,6 +421,17 @@ class _$ReportCopyWithImpl<$Res> implements $ReportCopyWith<$Res> {
       return _then(_value.copyWith(updatedAt: value));
     });
   }
+
+  @override
+  $FirTimestampCopyWith<$Res>? get resolvedAt {
+    if (_value.resolvedAt == null) {
+      return null;
+    }
+
+    return $FirTimestampCopyWith<$Res>(_value.resolvedAt!, (value) {
+      return _then(_value.copyWith(resolvedAt: value));
+    });
+  }
 }
 
 /// @nodoc
@@ -425,12 +445,15 @@ abstract class _$$_ReportCopyWith<$Res> implements $ReportCopyWith<$Res> {
       String resolvedReason,
       String? resolverUid,
       @FirTimestampConverter() FirTimestamp? createdAt,
-      @FirTimestampConverter() FirTimestamp? updatedAt});
+      @FirTimestampConverter() FirTimestamp? updatedAt,
+      @FirTimestampConverter() FirTimestamp? resolvedAt});
 
   @override
   $FirTimestampCopyWith<$Res>? get createdAt;
   @override
   $FirTimestampCopyWith<$Res>? get updatedAt;
+  @override
+  $FirTimestampCopyWith<$Res>? get resolvedAt;
 }
 
 /// @nodoc
@@ -450,6 +473,7 @@ class __$$_ReportCopyWithImpl<$Res> extends _$ReportCopyWithImpl<$Res>
     Object? resolverUid = freezed,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
+    Object? resolvedAt = freezed,
   }) {
     return _then(_$_Report(
       description: description == freezed
@@ -476,6 +500,10 @@ class __$$_ReportCopyWithImpl<$Res> extends _$ReportCopyWithImpl<$Res>
           ? _value.updatedAt
           : updatedAt // ignore: cast_nullable_to_non_nullable
               as FirTimestamp?,
+      resolvedAt: resolvedAt == freezed
+          ? _value.resolvedAt
+          : resolvedAt // ignore: cast_nullable_to_non_nullable
+              as FirTimestamp?,
     ));
   }
 }
@@ -489,7 +517,8 @@ class _$_Report implements _Report {
       this.resolvedReason = "",
       this.resolverUid = null,
       @FirTimestampConverter() this.createdAt,
-      @FirTimestampConverter() this.updatedAt});
+      @FirTimestampConverter() this.updatedAt,
+      @FirTimestampConverter() this.resolvedAt});
 
   factory _$_Report.fromJson(Map<String, dynamic> json) =>
       _$$_ReportFromJson(json);
@@ -511,10 +540,13 @@ class _$_Report implements _Report {
   @override
   @FirTimestampConverter()
   final FirTimestamp? updatedAt;
+  @override
+  @FirTimestampConverter()
+  final FirTimestamp? resolvedAt;
 
   @override
   String toString() {
-    return 'Report(description: $description, resolved: $resolved, resolvedReason: $resolvedReason, resolverUid: $resolverUid, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'Report(description: $description, resolved: $resolved, resolvedReason: $resolvedReason, resolverUid: $resolverUid, createdAt: $createdAt, updatedAt: $updatedAt, resolvedAt: $resolvedAt)';
   }
 
   @override
@@ -530,7 +562,9 @@ class _$_Report implements _Report {
             const DeepCollectionEquality()
                 .equals(other.resolverUid, resolverUid) &&
             const DeepCollectionEquality().equals(other.createdAt, createdAt) &&
-            const DeepCollectionEquality().equals(other.updatedAt, updatedAt));
+            const DeepCollectionEquality().equals(other.updatedAt, updatedAt) &&
+            const DeepCollectionEquality()
+                .equals(other.resolvedAt, resolvedAt));
   }
 
   @JsonKey(ignore: true)
@@ -542,7 +576,8 @@ class _$_Report implements _Report {
       const DeepCollectionEquality().hash(resolvedReason),
       const DeepCollectionEquality().hash(resolverUid),
       const DeepCollectionEquality().hash(createdAt),
-      const DeepCollectionEquality().hash(updatedAt));
+      const DeepCollectionEquality().hash(updatedAt),
+      const DeepCollectionEquality().hash(resolvedAt));
 
   @JsonKey(ignore: true)
   @override
@@ -562,7 +597,8 @@ abstract class _Report implements Report {
       final String resolvedReason,
       final String? resolverUid,
       @FirTimestampConverter() final FirTimestamp? createdAt,
-      @FirTimestampConverter() final FirTimestamp? updatedAt}) = _$_Report;
+      @FirTimestampConverter() final FirTimestamp? updatedAt,
+      @FirTimestampConverter() final FirTimestamp? resolvedAt}) = _$_Report;
 
   factory _Report.fromJson(Map<String, dynamic> json) = _$_Report.fromJson;
 
@@ -580,6 +616,9 @@ abstract class _Report implements Report {
   @override
   @FirTimestampConverter()
   FirTimestamp? get updatedAt => throw _privateConstructorUsedError;
+  @override
+  @FirTimestampConverter()
+  FirTimestamp? get resolvedAt => throw _privateConstructorUsedError;
   @override
   @JsonKey(ignore: true)
   _$$_ReportCopyWith<_$_Report> get copyWith =>
