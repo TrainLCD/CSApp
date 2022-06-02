@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:csapp/models/report.dart';
+import 'package:csapp/models/search_result_screen_arguments.dart';
 import 'package:csapp/utils/reopen_report.dart';
 import 'package:csapp/utils/resolve_report.dart';
 import 'package:csapp/widgets/fetch_failed.dart';
@@ -74,6 +75,16 @@ class _ReportDetailsWidgetState extends State<ReportDetailsWidget> {
                           fontWeight: FontWeight.bold,
                           color: Colors.black54),
                     ),
+                    OutlinedButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, "/search_result",
+                              arguments: SearchResultScreenArguments(
+                                report.reporterUid,
+                              ));
+                        },
+                        child: const Text(
+                          "同じUIDで検索",
+                        ))
                   ],
                 ));
           }

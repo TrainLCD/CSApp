@@ -1,5 +1,6 @@
 import 'package:csapp/screens/home.dart';
 import 'package:csapp/screens/login.dart';
+import 'package:csapp/screens/search_result.dart';
 import 'package:csapp/screens/single_report.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -20,5 +21,6 @@ Future<void> main() async {
         "/home": (context) => const HomeScreen(),
         "/login": (context) => const LoginScreen(),
         "/report": (context) => const SingleReportScreen(),
+        "/search_result": (context) => const SearchResultScreen()
       }));
 }
