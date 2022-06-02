@@ -317,6 +317,7 @@ Report _$ReportFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$Report {
   String get description => throw _privateConstructorUsedError;
+  String get reporterUid => throw _privateConstructorUsedError;
   bool get resolved => throw _privateConstructorUsedError;
   String get resolvedReason => throw _privateConstructorUsedError;
   String? get resolverUid => throw _privateConstructorUsedError;
@@ -338,6 +339,7 @@ abstract class $ReportCopyWith<$Res> {
       _$ReportCopyWithImpl<$Res>;
   $Res call(
       {String description,
+      String reporterUid,
       bool resolved,
       String resolvedReason,
       String? resolverUid,
@@ -361,6 +363,7 @@ class _$ReportCopyWithImpl<$Res> implements $ReportCopyWith<$Res> {
   @override
   $Res call({
     Object? description = freezed,
+    Object? reporterUid = freezed,
     Object? resolved = freezed,
     Object? resolvedReason = freezed,
     Object? resolverUid = freezed,
@@ -372,6 +375,10 @@ class _$ReportCopyWithImpl<$Res> implements $ReportCopyWith<$Res> {
       description: description == freezed
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
+              as String,
+      reporterUid: reporterUid == freezed
+          ? _value.reporterUid
+          : reporterUid // ignore: cast_nullable_to_non_nullable
               as String,
       resolved: resolved == freezed
           ? _value.resolved
@@ -441,6 +448,7 @@ abstract class _$$_ReportCopyWith<$Res> implements $ReportCopyWith<$Res> {
   @override
   $Res call(
       {String description,
+      String reporterUid,
       bool resolved,
       String resolvedReason,
       String? resolverUid,
@@ -468,6 +476,7 @@ class __$$_ReportCopyWithImpl<$Res> extends _$ReportCopyWithImpl<$Res>
   @override
   $Res call({
     Object? description = freezed,
+    Object? reporterUid = freezed,
     Object? resolved = freezed,
     Object? resolvedReason = freezed,
     Object? resolverUid = freezed,
@@ -479,6 +488,10 @@ class __$$_ReportCopyWithImpl<$Res> extends _$ReportCopyWithImpl<$Res>
       description: description == freezed
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
+              as String,
+      reporterUid: reporterUid == freezed
+          ? _value.reporterUid
+          : reporterUid // ignore: cast_nullable_to_non_nullable
               as String,
       resolved: resolved == freezed
           ? _value.resolved
@@ -513,6 +526,7 @@ class __$$_ReportCopyWithImpl<$Res> extends _$ReportCopyWithImpl<$Res>
 class _$_Report implements _Report {
   const _$_Report(
       {required this.description,
+      required this.reporterUid,
       this.resolved = false,
       this.resolvedReason = "",
       this.resolverUid = null,
@@ -525,6 +539,8 @@ class _$_Report implements _Report {
 
   @override
   final String description;
+  @override
+  final String reporterUid;
   @override
   @JsonKey()
   final bool resolved;
@@ -546,7 +562,7 @@ class _$_Report implements _Report {
 
   @override
   String toString() {
-    return 'Report(description: $description, resolved: $resolved, resolvedReason: $resolvedReason, resolverUid: $resolverUid, createdAt: $createdAt, updatedAt: $updatedAt, resolvedAt: $resolvedAt)';
+    return 'Report(description: $description, reporterUid: $reporterUid, resolved: $resolved, resolvedReason: $resolvedReason, resolverUid: $resolverUid, createdAt: $createdAt, updatedAt: $updatedAt, resolvedAt: $resolvedAt)';
   }
 
   @override
@@ -556,6 +572,8 @@ class _$_Report implements _Report {
             other is _$_Report &&
             const DeepCollectionEquality()
                 .equals(other.description, description) &&
+            const DeepCollectionEquality()
+                .equals(other.reporterUid, reporterUid) &&
             const DeepCollectionEquality().equals(other.resolved, resolved) &&
             const DeepCollectionEquality()
                 .equals(other.resolvedReason, resolvedReason) &&
@@ -572,6 +590,7 @@ class _$_Report implements _Report {
   int get hashCode => Object.hash(
       runtimeType,
       const DeepCollectionEquality().hash(description),
+      const DeepCollectionEquality().hash(reporterUid),
       const DeepCollectionEquality().hash(resolved),
       const DeepCollectionEquality().hash(resolvedReason),
       const DeepCollectionEquality().hash(resolverUid),
@@ -593,6 +612,7 @@ class _$_Report implements _Report {
 abstract class _Report implements Report {
   const factory _Report(
       {required final String description,
+      required final String reporterUid,
       final bool resolved,
       final String resolvedReason,
       final String? resolverUid,
@@ -604,6 +624,8 @@ abstract class _Report implements Report {
 
   @override
   String get description => throw _privateConstructorUsedError;
+  @override
+  String get reporterUid => throw _privateConstructorUsedError;
   @override
   bool get resolved => throw _privateConstructorUsedError;
   @override

@@ -8,6 +8,7 @@ part of 'report.dart';
 
 _$_Report _$$_ReportFromJson(Map<String, dynamic> json) => _$_Report(
       description: json['description'] as String,
+      reporterUid: json['reporterUid'] as String,
       resolved: json['resolved'] as bool? ?? false,
       resolvedReason: json['resolvedReason'] as String? ?? "",
       resolverUid: json['resolverUid'] as String? ?? null,
@@ -18,6 +19,7 @@ _$_Report _$$_ReportFromJson(Map<String, dynamic> json) => _$_Report(
 
 Map<String, dynamic> _$$_ReportToJson(_$_Report instance) => <String, dynamic>{
       'description': instance.description,
+      'reporterUid': instance.reporterUid,
       'resolved': instance.resolved,
       'resolvedReason': instance.resolvedReason,
       'resolverUid': instance.resolverUid,

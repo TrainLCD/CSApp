@@ -33,6 +33,7 @@ class FirTimestamp with _$FirTimestamp {
 class Report with _$Report {
   const factory Report({
     required String description,
+    required String reporterUid,
     @Default(false) bool resolved,
     @Default("") String resolvedReason,
     @Default(null) String? resolverUid,

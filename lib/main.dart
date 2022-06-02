@@ -529,6 +529,42 @@ class _ReportDetailsWidgetState extends State<ReportDetailsWidget> {
     return Report.fromJson(widget.reportJson!);
   }
 
+  // 同じユーザーのレポートを表示する
+  // エラーもしくはデータが１件以下場合は何も表示しない
+  Widget _sameUserTicketsCount() {
+    final report = getReportFromJSON();
+    if (report == null) {
+      return const SizedBox.shrink();
+    }
+
+    return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+        stream: FirebaseFirestore.instance
+            .collection("reports")
+            .where("reporterUid", isEqualTo: report.reporterUid)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const SizedBox.shrink();
+          }
+
+          if (snapshot.hasData) {
+            if (snapshot.data!.size == 1) {
+              return const SizedBox.shrink();
+            }
+            return Container(
+                margin: const EdgeInsets.only(top: 8),
+                child: Text(
+                  "同じUIDからさらに${snapshot.data!.size - 1}件のレポートが届いています",
+                  style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black54),
+                ));
+          }
+          return const SizedBox.shrink();
+        });
+  }
+
   Widget _ticketStatus() {
     final resolvedAt = widget.reportJson?["resolvedAt"] as Timestamp?;
     final createdAt = widget.reportJson?["createdAt"] as Timestamp?;
@@ -540,22 +576,25 @@ class _ReportDetailsWidgetState extends State<ReportDetailsWidget> {
     if (resolvedAt == null) {
       return Container(
           margin: const EdgeInsets.only(top: 8),
-          child: Row(children: [
-            TicketStatusIcon(
-              resolved: report.resolved,
-              small: true,
-            ),
-            Container(
-                margin: const EdgeInsets.only(left: 4),
-                child: Text(
-                  report.resolved
-                      ? "解決済み"
-                      : "未解決(${getFormattedDate(createdAt!.toDate())}時点)",
-                  style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black54),
-                ))
+          child: Column(children: [
+            Row(children: [
+              TicketStatusIcon(
+                resolved: report.resolved,
+                small: true,
+              ),
+              Container(
+                  margin: const EdgeInsets.only(left: 4),
+                  child: Text(
+                    report.resolved
+                        ? "解決済み"
+                        : "未解決(${getFormattedDate(createdAt!.toDate())}時点)",
+                    style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black54),
+                  )),
+            ]),
+            _sameUserTicketsCount()
           ]));
     }
 
