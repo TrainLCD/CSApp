@@ -67,6 +67,7 @@ class _ReportDetailsWidgetState extends State<ReportDetailsWidget> {
             return Container(
                 margin: const EdgeInsets.only(top: 8),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       "同じUIDからさらに${snapshot.data!.size - 1}件のレポートが届いています",
@@ -127,22 +128,25 @@ class _ReportDetailsWidgetState extends State<ReportDetailsWidget> {
 
     return Container(
         margin: const EdgeInsets.only(top: 8),
-        child: Row(children: [
-          TicketStatusIcon(
-            resolved: report.resolved,
-            small: true,
-          ),
-          Container(
-              margin: const EdgeInsets.only(left: 4),
-              child: Text(
-                report.resolved
-                    ? "${getFormattedDate(resolvedAt.toDate())}に解決済み"
-                    : "未解決(${getFormattedDate(createdAt!.toDate())}時点)",
-                style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black54),
-              ))
+        child: Column(children: [
+          Row(children: [
+            TicketStatusIcon(
+              resolved: report.resolved,
+              small: true,
+            ),
+            Container(
+                margin: const EdgeInsets.only(left: 4),
+                child: Text(
+                  report.resolved
+                      ? "${getFormattedDate(resolvedAt.toDate())}に解決済み"
+                      : "未解決(${getFormattedDate(createdAt!.toDate())}時点)",
+                  style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black54),
+                )),
+          ]),
+          _sameUserTicketsCount(),
         ]));
   }
 
