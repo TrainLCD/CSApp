@@ -5,7 +5,6 @@ import 'package:csapp/widgets/ticket_list.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-enum TicketMenuItem { toggleStatus }
 
 enum AppBarMenuItem { showResolvedTickets, signOut }
 
