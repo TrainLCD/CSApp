@@ -4,32 +4,23 @@ import 'package:csapp/widgets/fetch_failed.dart';
 import 'package:csapp/widgets/ticket_list.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../models/search_result_screen_arguments.dart';
+import '../providers/search.dart';
 
 enum TicketMenuItem { toggleStatus }
 
 enum AppBarMenuItem { showResolvedTickets, signOut }
 
-class SearchResultScreen extends StatefulWidget {
-  const SearchResultScreen({super.key});
-
-  @override
-  _SearchResultScreenState createState() => _SearchResultScreenState();
-}
-
-class _SearchResultScreenState extends State<SearchResultScreen> {
-  bool _showResolvedTickets = false;
-
-  List<Widget> _getAppBarOptions() {
+class SearchResultScreen extends ConsumerWidget {
+  List<Widget> _getAppBarOptions(BuildContext context, WidgetRef ref) {
     return [
       PopupMenuButton<AppBarMenuItem>(
         onSelected: (AppBarMenuItem item) {
           switch (item) {
             case AppBarMenuItem.showResolvedTickets:
-              setState(() {
-                _showResolvedTickets = !_showResolvedTickets;
-              });
+              ref.read(searchStateProvider.notifier).toggle();
               break;
             case AppBarMenuItem.signOut:
               showDialog(
@@ -59,10 +50,12 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               break;
           }
         },
-        itemBuilder: (context) => <PopupMenuEntry<AppBarMenuItem>>[
+        itemBuilder: (BuildContext context) => <PopupMenuEntry<AppBarMenuItem>>[
           PopupMenuItem<AppBarMenuItem>(
             value: AppBarMenuItem.showResolvedTickets,
-            child: Text(_showResolvedTickets ? "解決済みチケットを隠す" : "解決済みチケットを表示する"),
+            child: Text(ref.watch(searchStateProvider).showResolvedTickets
+                ? "解決済みチケットを隠す"
+                : "解決済みチケットを表示する"),
           ),
           const PopupMenuItem<AppBarMenuItem>(
               value: AppBarMenuItem.signOut, child: Text('ログアウト'))
@@ -72,8 +65,8 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   }
 
   Stream<QuerySnapshot<Map<String, dynamic>>> _getDocumentsByReporterUid(
-      String reporterUid) {
-    if (_showResolvedTickets) {
+      WidgetRef ref, String reporterUid) {
+    if (ref.watch(searchStateProvider).showResolvedTickets) {
       return FirebaseFirestore.instance
           .collection("reports")
           .where("reporterUid", isEqualTo: reporterUid)
@@ -86,12 +79,12 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         .snapshots();
   }
 
-  Widget _ticketList() {
+  Widget _ticketList(BuildContext context, WidgetRef ref) {
     final arguments = ModalRoute.of(context)!.settings.arguments
         as SearchResultScreenArguments;
 
     return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-        stream: _getDocumentsByReporterUid(arguments.reporterUid),
+        stream: _getDocumentsByReporterUid(ref, arguments.reporterUid),
         builder: (BuildContext context,
             AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -115,12 +108,12 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
         appBar: AppBar(
           title: const Text("検索結果"),
-          actions: _getAppBarOptions(),
+          actions: _getAppBarOptions(context, ref),
         ),
-        body: _ticketList());
+        body: _ticketList(context, ref));
   }
 }

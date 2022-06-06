@@ -5,6 +5,7 @@ import 'package:csapp/screens/single_report.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'firebase_options.dart';
 
@@ -14,13 +15,14 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  runApp(MaterialApp(
-      initialRoute:
-          FirebaseAuth.instance.currentUser == null ? "/login" : "/home",
-      routes: {
-        "/home": (context) => const HomeScreen(),
+  runApp(ProviderScope(
+      child: MaterialApp(
+          initialRoute:
+              FirebaseAuth.instance.currentUser == null ? "/login" : "/home",
+          routes: {
+        "/home": (context) => HomeScreen(),
         "/login": (context) => const LoginScreen(),
         "/report": (context) => const SingleReportScreen(),
-        "/search_result": (context) => const SearchResultScreen()
-      }));
+        "/search_result": (context) => SearchResultScreen()
+      })));
 }
