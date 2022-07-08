@@ -43,11 +43,11 @@ class _LoginScreenState extends State<LoginScreen> {
         await FirebaseAuth.instance.signInWithEmailAndPassword(
             email: _emailFormController.text,
             password: _passwordFormController.text);
-      } catch (e) {
+        if (!mounted) return;
+        Navigator.of(context).pushReplacementNamed("/home");
+      } on FirebaseAuthException catch (e) {
         _openAuthErrorDialog(context);
       }
-      if (!mounted) return;
-      Navigator.of(context).pushReplacementNamed("/home");
     }
   }
 
