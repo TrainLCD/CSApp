@@ -190,6 +190,51 @@ class _ReportDetailsWidgetState extends State<ReportDetailsWidget> {
                       color: Colors.black54),
                 )),
           ]),
+          Row(children: [
+            Text(
+              "端末モデル名: ${report.deviceInfo?.brand} ${report.deviceInfo?.modelName}(${report.deviceInfo?.modelId})",
+              style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black54),
+            ),
+          ]),
+          Row(children: [
+            Text(
+              "端末のOS: ${report.deviceInfo?.osName} ${report.deviceInfo?.osVersion}",
+              style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black54),
+            ),
+          ]),
+          Row(children: [
+            Text(
+              "端末設定言語: ${report.deviceInfo?.locale}",
+              style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black54),
+            ),
+          ]),
+          Row(children: [
+            Text(
+              "アプリ設定言語: ${report.language}",
+              style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black54),
+            ),
+          ]),
+          Row(children: [
+            Text(
+              "アプリのバージョン: ${report.appVersion}",
+              style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black54),
+            ),
+          ]),
           _sameUserTicketsCount(),
         ]));
   }
