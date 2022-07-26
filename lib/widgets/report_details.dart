@@ -64,30 +64,33 @@ class _ReportDetailsWidgetState extends State<ReportDetailsWidget> {
             if (snapshot.data!.size == 1) {
               return const SizedBox.shrink();
             }
-            return Container(
-                margin: const EdgeInsets.only(top: 8),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "同じUIDからさらに${snapshot.data!.size - 1}件のレポートが届いています",
-                      style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black54),
-                    ),
-                    OutlinedButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, "/search_result",
-                              arguments: SearchResultScreenArguments(
-                                report.reporterUid,
-                              ));
-                        },
-                        child: const Text(
-                          "同じUIDで検索",
-                        ))
-                  ],
-                ));
+            return SizedBox(
+                child: SizedBox(
+                    width: double.infinity,
+                    child: Container(
+                        margin: const EdgeInsets.only(top: 8),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "同じUIDからさらに${snapshot.data!.size - 1}件のレポートが届いています",
+                              style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black54),
+                            ),
+                            OutlinedButton(
+                                onPressed: () {
+                                  Navigator.pushNamed(context, "/search_result",
+                                      arguments: SearchResultScreenArguments(
+                                        report.reporterUid,
+                                      ));
+                                },
+                                child: const Text(
+                                  "同じUIDで検索",
+                                ))
+                          ],
+                        ))));
           }
           return const SizedBox.shrink();
         });
@@ -167,6 +170,7 @@ class _ReportDetailsWidgetState extends State<ReportDetailsWidget> {
                     color: Colors.black54),
               ),
             ]),
+            _sameUserTicketsCount()
           ]));
     }
 
