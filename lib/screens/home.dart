@@ -10,6 +10,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 enum AppBarMenuItem { showResolvedTickets, signOut }
 
 class HomeScreen extends ConsumerWidget {
+  const HomeScreen({super.key});
+
   Widget _ticketList(WidgetRef ref, bool showResolvedTickets) {
     return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
         stream: showResolvedTickets

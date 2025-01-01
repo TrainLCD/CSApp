@@ -3,8 +3,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 class ReportDetailsImage extends StatelessWidget {
-  const ReportDetailsImage({Key? key, required this.reportId})
-      : super(key: key);
+  const ReportDetailsImage({super.key, required this.reportId});
 
   final String reportId;
 

@@ -11,8 +11,7 @@ import '../utils/resolve_report.dart';
 enum TicketMenuItem { resolveReport, reopenTicket }
 
 class TicketListWidget extends StatelessWidget {
-  const TicketListWidget({Key? key, required this.ticketsData})
-      : super(key: key);
+  const TicketListWidget({super.key, required this.ticketsData});
 
   final List<QueryDocumentSnapshot<Map<String, dynamic>>> ticketsData;
 
