@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class FetchFailedWidget extends StatelessWidget {
-  const FetchFailedWidget({Key? key, required this.text}) : super(key: key);
+  const FetchFailedWidget({super.key, required this.text});
 
   final String text;
 

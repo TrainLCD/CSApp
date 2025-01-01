@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
 class TicketStatusIcon extends StatelessWidget {
-  const TicketStatusIcon({Key? key, required this.resolved, this.small})
-      : super(key: key);
+  const TicketStatusIcon({super.key, required this.resolved, this.small});
 
   final bool resolved;
   final bool? small;

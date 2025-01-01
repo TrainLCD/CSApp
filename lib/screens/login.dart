@@ -45,7 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
             password: _passwordFormController.text);
         if (!mounted) return;
         Navigator.of(context).pushReplacementNamed("/home");
-      } on FirebaseAuthException catch (e) {
+      } on FirebaseAuthException {
         _openAuthErrorDialog(context);
       }
     }

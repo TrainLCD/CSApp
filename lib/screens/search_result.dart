@@ -14,6 +14,8 @@ enum TicketMenuItem { toggleStatus }
 enum AppBarMenuItem { showResolvedTickets, signOut }
 
 class SearchResultScreen extends ConsumerWidget {
+  const SearchResultScreen({super.key});
+
   List<Widget> _getAppBarOptions(BuildContext context, WidgetRef ref) {
     return [
       PopupMenuButton<AppBarMenuItem>(
